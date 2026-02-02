@@ -18,7 +18,7 @@ SmartTest transforms messy test logs into a clean, programmer-centric dashboard.
     - **Systemic Failure Analysis**: Identifies if a single issue is causing multiple test failures.
     - **Environment Audit**: Detects missing or misconfigured environment variables.
 - **🌈 Smart Clustering**: Groups identical errors together so you solve 1 problem to fix 10 tests.
-- **通知 Team Notifications**: Instant **Slack** and **Microsoft Teams** alerts with critical failure insights.
+- **Team Notifications**: Instant **Slack** and **Microsoft Teams** alerts with critical failure insights.
 - **🏆 Stability Leaderboard**: Gamify your team's testing culture with contributors' stability scores.
 - **🤖 AI Multiplier**: Built-in hooks for GPT/Gemini based failure summarization.
 
