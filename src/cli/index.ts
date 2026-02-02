@@ -2,7 +2,7 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
 import * as fs from 'fs-extra';
-import { JestParser, PlaywrightParser } from '../parsers/parsers';
+import { JestParser, PlaywrightParser, CypressParser, VitestParser, MochaParser } from '../parsers/parsers';
 import { Analyzer } from '../core/analyzer';
 import { HtmlReporter } from '../reporters/html';
 import { NotificationService } from '../reporters/notifications';
@@ -11,15 +11,15 @@ import { FinalReport } from '../core/types';
 const program = new Command();
 
 program
-    .name('smart-test-reporter')
-    .description('Intelligent test reporting for modern teams')
-    .version('1.0.0');
+    .name('failsafe-report')
+    .description('Intelligent and Fail-Safe test reporting for modern teams')
+    .version('1.0.1');
 
 program
     .command('generate')
     .description('Generate a report from test results')
     .argument('<path>', 'Path to test results file (JSON)')
-    .option('--framework <type>', 'Force framework type (jest, playwright)')
+    .option('--framework <type>', 'Force framework type (jest, playwright, cypress, vitest, mocha)')
     .option('--output <path>', 'Output path for HTML report', 'test-report.html')
     .option('--slack <webhook>', 'Slack webhook URL for notifications')
     .option('--ci', 'CI mode (exit with code 1 if tests failed)')
@@ -33,11 +33,17 @@ program
             }
 
             const content = await fs.readJson(path);
-            const parsers = [new JestParser(), new PlaywrightParser()];
+            const parsers = [
+                new JestParser(),
+                new PlaywrightParser(),
+                new CypressParser(),
+                new VitestParser(),
+                new MochaParser()
+            ];
 
             let parser = parsers.find(p => p.canParse(content));
             if (options.framework) {
-                parser = parsers.find(p => p.name === options.framework);
+                parser = parsers.find(p => p.name === options.framework.toLowerCase());
             }
 
             if (!parser) {
@@ -84,7 +90,7 @@ program
     .command('leaderboard')
     .description('Show the test quality leaderboard (Experimental)')
     .action(() => {
-        console.log(chalk.yellow.bold('\n🏆 SmartTest Leaderboard - Top Contributors to Test Stability\n'));
+        console.log(chalk.red.bold('\n🛡️ FailSafe Leaderboard - Top Contributors to Test Stability\n'));
 
         const mockData = [
             { name: 'Mallik Galib', score: 100, stableTests: 52, badge: '👑 Legend' },

@@ -17,7 +17,7 @@ export class HtmlReporter {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartTest Report - ${summary.framework}</title>
+    <title>FailSafe Report - ${summary.framework}</title>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -254,7 +254,7 @@ export class HtmlReporter {
     <div class="container">
         <header>
             <div class="logo-group">
-                <div class="title">SMART_TEST_REPORT</div>
+                <div class="title">FAIL_SAFE_REPORT</div>
                 <div class="meta-info">FRAMEWORK: ${summary.framework.toUpperCase()} // ENV: CI/PROD</div>
             </div>
             <div class="meta-info">
@@ -325,7 +325,7 @@ export class HtmlReporter {
 
         <footer>
             <div>
-                © 2026 SmartTest Reporter // Version 1.0.0
+                © 2026 FailSafe Reporter // Version 1.0.1
             </div>
             <div>
                 Built by <a href="https://www.linkedin.com/in/mallikgalibshahriar/" target="_blank">Mallik Galib Shahriar</a>

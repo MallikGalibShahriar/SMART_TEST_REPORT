@@ -1,16 +1,22 @@
 {
-  "name": "smart-test-reporter",
-  "version": "1.0.0",
-  "description": "",
+  "name": "@mallikgalibshahriar/failsafe-report",
+  "version": "1.0.2",
+  "description": "Intelligent and beautiful test reporter for Jest and Playwright.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "smart-test-reporter": "bin/smart-test-reporter.js"
+    "failsafe-report": "bin/smart-test-reporter.js"
   },
+  "files": [
+    "dist",
+    "bin",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [],
   "author": "Mallik Galib Shahriar",

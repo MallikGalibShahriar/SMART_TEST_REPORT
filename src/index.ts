@@ -1,5 +1,5 @@
 import { program } from './cli';
-import { JestParser, PlaywrightParser } from './parsers/parsers';
+import { JestParser, PlaywrightParser, CypressParser, VitestParser, MochaParser } from './parsers/parsers';
 import { Analyzer } from './core/analyzer';
 import { HtmlReporter } from './reporters/html';
 import { NotificationService } from './reporters/notifications';
@@ -8,11 +8,17 @@ import { NotificationService } from './reporters/notifications';
 const reporter = {
     generate: async (options: {
         results: any,
-        framework?: 'jest' | 'playwright',
+        framework?: 'jest' | 'playwright' | 'cypress' | 'vitest' | 'mocha',
         outputPath?: string,
         notifications?: { type: 'slack' | 'teams', webhookUrl: string }[]
     }) => {
-        const parsers = [new JestParser(), new PlaywrightParser()];
+        const parsers = [
+            new JestParser(),
+            new PlaywrightParser(),
+            new CypressParser(),
+            new VitestParser(),
+            new MochaParser()
+        ];
         let parser = parsers.find(p => p.canParse(options.results));
 
         if (options.framework) {
