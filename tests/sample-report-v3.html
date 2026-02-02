@@ -1,0 +1,548 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Test Report - jest</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --bg: #0b0f1a;
+            --card-bg: rgba(30, 41, 59, 0.6);
+            --text: #f8fafc;
+            --text-dim: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
+            --accent: #8b5cf6;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 2rem;
+            line-height: 1.6;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.1) 0px, transparent 40%),
+                radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.1) 0px, transparent 40%),
+                radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.05) 0px, transparent 40%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4rem;
+        }
+
+        .logo-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.03em;
+        }
+
+        .framework-tag {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--primary-light);
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            margin-top: -0.25rem;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 3rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            border-radius: 1.25rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.15);
+            background: rgba(30, 41, 59, 0.8);
+        }
+
+        .card h3 {
+            margin: 0;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-weight: 600;
+        }
+
+        .card .value {
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: baseline;
+            gap: 0.25rem;
+        }
+
+        .value.success { color: var(--success); }
+        .value.danger { color: var(--danger); }
+        .value.primary { color: var(--primary-light); }
+        .value small { font-size: 1rem; color: var(--text-dim); font-weight: 400; }
+
+        .insights-section {
+            background: rgba(99, 102, 241, 0.05);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 4rem;
+            border: 1px dashed rgba(99, 102, 241, 0.3);
+        }
+
+        .insights-section h2 {
+            margin: 0 0 1.5rem 0;
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text);
+        }
+
+        .insight-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .insight-item {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1rem 1.25rem;
+            border-radius: 1rem;
+            font-size: 0.95rem;
+            border-left: 3px solid var(--primary);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .test-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            gap: 1.5rem;
+        }
+
+        .filter-group {
+            display: flex;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.35rem;
+            border-radius: 0.85rem;
+            border: 1px solid var(--border);
+        }
+
+        .filter-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            padding: 0.5rem 1.25rem;
+            border-radius: 0.65rem;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .search-container {
+            position: relative;
+            flex-grow: 1;
+            max-width: 400px;
+        }
+
+        .search-box {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 0.85rem;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.4;
+        }
+
+        .test-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .test-item {
+            background: var(--card-bg);
+            border-radius: 1.25rem;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+
+        .test-item:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .test-header {
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .test-main-info {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .status-passed .status-indicator { background: var(--success); box-shadow: 0 0 10px var(--success); }
+        .status-failed .status-indicator { background: var(--danger); box-shadow: 0 0 10px var(--danger); }
+
+        .test-title-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .test-name { font-weight: 600; font-size: 1rem; color: #fff; }
+        .test-suite { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.15rem; }
+
+        .test-meta {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .test-duration {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .error-log-container {
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            display: none;
+        }
+
+        .test-item.expanded .error-log-container { display: block; }
+        .test-item.expanded { border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.02); }
+
+        .error-log {
+            padding: 1.5rem;
+            background: #000;
+            border-radius: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: #fda4af;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            line-height: 1.7;
+        }
+
+        footer {
+            margin-top: 6rem;
+            padding: 3rem 0;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: var(--primary-light);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .test-controls { flex-direction: column; align-items: stretch; }
+            .test-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+            .test-meta { width: 100%; justify-content: space-between; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-group">
+                <div class="logo">SMART TEST</div>
+                <div class="framework-tag">jest ENGINE</div>
+            </div>
+            <div style="text-align: right">
+                <div style="font-weight: 600; color: #fff">Feb 2, 2026</div>
+                <div class="timestamp">12:50 PM</div>
+            </div>
+        </header>
+
+        <div class="summary-cards">
+            <div class="card">
+                <h3>Executions</h3>
+                <div class="value primary">10</div>
+            </div>
+            <div class="card">
+                <h3>Passed</h3>
+                <div class="value success">7 <small>✔</small></div>
+            </div>
+            <div class="card">
+                <h3>Failed</h3>
+                <div class="value danger">2 <small>✖</small></div>
+            </div>
+            <div class="card">
+                <h3>Stability</h3>
+                <div class="value">70.0%</div>
+            </div>
+        </div>
+
+        
+        <div class="insights-section">
+            <h2>🧠 Intelligent Analysis</h2>
+            <div class="insight-grid">
+                
+                    <div class="insight-item">
+                        <span>⏳ Latency Alert: 1 tests failed due to timeouts. Consider checking network stability or increasing wait times.</span>
+                    </div>
+                
+            </div>
+        </div>
+        
+
+        <div class="test-controls">
+            <div class="filter-group">
+                <button class="filter-btn active" data-filter="all">All Tests</button>
+                <button class="filter-btn" data-filter="failed">Failed</button>
+                <button class="filter-btn" data-filter="passed">Passed</button>
+            </div>
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-box" placeholder="Filter by test name or file...">
+            </div>
+        </div>
+
+        <div class="test-list" id="testList">
+            
+                <div class="test-item status-passed" data-status="passed" data-name="should login with valid credentials" data-suite="user authentication">
+                    <div class="test-header" onclick="toggleError(this)">
+                        <div class="test-main-info">
+                            <div class="status-indicator"></div>
+                            <div class="test-title-group">
+                                <span class="test-suite">User Authentication</span>
+                                <span class="test-name">should login with valid credentials</span>
+                            </div>
+                        </div>
+                        <div class="test-meta">
+                            <span class="test-duration">150ms</span>
+                        </div>
+                    </div>
+                    
+                </div>
+            
+                <div class="test-item status-passed" data-status="passed" data-name="should fail with invalid password" data-suite="user authentication">
+                    <div class="test-header" onclick="toggleError(this)">
+                        <div class="test-main-info">
+                            <div class="status-indicator"></div>
+                            <div class="test-title-group">
+                                <span class="test-suite">User Authentication</span>
+                                <span class="test-name">should fail with invalid password</span>
+                            </div>
+                        </div>
+                        <div class="test-meta">
+                            <span class="test-duration">120ms</span>
+                        </div>
+                    </div>
+                    
+                </div>
+            
+                <div class="test-item status-failed" data-status="failed" data-name="should show error for non-existent user" data-suite="user authentication">
+                    <div class="test-header" onclick="toggleError(this)">
+                        <div class="test-main-info">
+                            <div class="status-indicator"></div>
+                            <div class="test-title-group">
+                                <span class="test-suite">User Authentication</span>
+                                <span class="test-name">should show error for non-existent user</span>
+                            </div>
+                        </div>
+                        <div class="test-meta">
+                            <span class="test-duration">300ms</span>
+                        </div>
+                    </div>
+                    
+                    <div class="error-log-container">
+                        <div class="error-log">Error: Timeout of 2000ms exceeded. Expected text 'User not found' but found 'Loading...'</div>
+                    </div>
+                    
+                </div>
+            
+                <div class="test-item status-failed" data-status="failed" data-name="should process credit card payment" data-suite="payment processing">
+                    <div class="test-header" onclick="toggleError(this)">
+                        <div class="test-main-info">
+                            <div class="status-indicator"></div>
+                            <div class="test-title-group">
+                                <span class="test-suite">Payment Processing</span>
+                                <span class="test-name">should process credit card payment</span>
+                            </div>
+                        </div>
+                        <div class="test-meta">
+                            <span class="test-duration">500ms</span>
+                        </div>
+                    </div>
+                    
+                    <div class="error-log-container">
+                        <div class="error-log">Error: API response change. Expected 200 but got 500. Message: Internal Server Error</div>
+                    </div>
+                    
+                </div>
+            
+                <div class="test-item status-passed" data-status="passed" data-name="should handle declined card" data-suite="payment processing">
+                    <div class="test-header" onclick="toggleError(this)">
+                        <div class="test-main-info">
+                            <div class="status-indicator"></div>
+                            <div class="test-title-group">
+                                <span class="test-suite">Payment Processing</span>
+                                <span class="test-name">should handle declined card</span>
+                            </div>
+                        </div>
+                        <div class="test-meta">
+                            <span class="test-duration">200ms</span>
+                        </div>
+                    </div>
+                    
+                </div>
+            
+        </div>
+        
+        <div id="noResults" class="empty-state" style="display: none;">
+            <div style="font-size: 3rem; margin-bottom: 1rem">🔍</div>
+            No tests match your current filters.
+        </div>
+
+        <footer>
+            <div>
+                © 2026 <span style="color: #fff; font-weight: 700">Smart Test Reporter</span>
+            </div>
+            <div>
+                Created by <a href="https://www.linkedin.com/in/mallikgalibshahriar/" target="_blank" rel="noopener noreferrer">Mallik Galib Shahriar</a>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        function toggleError(header) {
+            const item = header.parentElement;
+            if (item.querySelector('.error-log-container')) {
+                item.classList.toggle('expanded');
+            }
+        }
+
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const searchBox = document.querySelector('.search-box');
+        const testItems = document.querySelectorAll('.test-item');
+        const noResults = document.getElementById('noResults');
+
+        let currentFilter = 'all';
+        let searchQuery = '';
+
+        function updateList() {
+            let visibleCount = 0;
+            testItems.forEach(item => {
+                const status = item.getAttribute('data-status');
+                const name = item.getAttribute('data-name');
+                const suite = item.getAttribute('data-suite');
+                
+                const matchesFilter = currentFilter === 'all' || status === currentFilter;
+                const matchesSearch = name.includes(searchQuery) || suite.includes(searchQuery);
+
+                if (matchesFilter && matchesSearch) {
+                    item.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+        }
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.getAttribute('data-filter');
+                updateList();
+            });
+        });
+
+        searchBox.addEventListener('input', (e) => {
+            searchQuery = e.target.value.toLowerCase();
+            updateList();
+        });
+    </script>
+</body>
+</html>
+    

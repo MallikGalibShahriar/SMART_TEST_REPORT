@@ -1,0 +1,7 @@
+node_modules/
+dist/
+*.log
+test-report.html
+tests/sample-report.html
+tests/sample-report-v2.html
+.env

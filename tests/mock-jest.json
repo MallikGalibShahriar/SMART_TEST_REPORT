@@ -1,0 +1,52 @@
+{
+    "numTotalTests": 10,
+    "numPassedTests": 7,
+    "numFailedTests": 2,
+    "numPendingTests": 1,
+    "startTime": 1675245600000,
+    "testResults": [
+        {
+            "name": "User Authentication",
+            "status": "failed",
+            "assertionResults": [
+                {
+                    "title": "should login with valid credentials",
+                    "status": "passed",
+                    "duration": 150
+                },
+                {
+                    "title": "should fail with invalid password",
+                    "status": "passed",
+                    "duration": 120
+                },
+                {
+                    "title": "should show error for non-existent user",
+                    "status": "failed",
+                    "duration": 300,
+                    "failureMessages": [
+                        "Error: Timeout of 2000ms exceeded. Expected text 'User not found' but found 'Loading...'"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Payment Processing",
+            "status": "failed",
+            "assertionResults": [
+                {
+                    "title": "should process credit card payment",
+                    "status": "failed",
+                    "duration": 500,
+                    "failureMessages": [
+                        "Error: API response change. Expected 200 but got 500. Message: Internal Server Error"
+                    ]
+                },
+                {
+                    "title": "should handle declined card",
+                    "status": "passed",
+                    "duration": 200
+                }
+            ]
+        }
+    ]
+}
